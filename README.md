@@ -80,7 +80,7 @@ womens-pg-project/
 │   └── uploads/              # Uploaded complaint & resolution images
 ├── routes/
 │   ├── adminRoutes.js        # Admin endpoints
-│   ├── apiRoutes.js          # Secured external API endpoints (POST /api/send-rent-reminders)
+│   ├── apiRoutes.js          # Secured external API endpoints (POST/GET /api/send-rent-reminders, /ping, /health)
 │   ├── authRoutes.js         # Authentication endpoints (Admin, Tenant, Worker)
 │   ├── tenantRoutes.js       # Resident portal endpoints
 │   └── workerRoutes.js       # Worker portal endpoints

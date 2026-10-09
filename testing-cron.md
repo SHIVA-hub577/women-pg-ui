@@ -154,3 +154,32 @@ Google Cloud Scheduler allows you to send an HTTP POST request automatically on 
    - Click the **3 dots (Actions)** menu next to the job and select **Force run**.
    - Check your application logs in Google Cloud Logging / stdout to verify successful execution (`Sent: X, Failed/Skipped: Y`).
 
+---
+
+## 5. Scheduling with cron-job.org (Troubleshooting & Fixes)
+
+### Why did you get `"Failed (output too large)"`?
+`cron-job.org` has a strict response size limit (max 64 KB). This error happens for two common reasons:
+
+1. **Keep-Alive Ping to Homepage:** You set the URL to `https://your-domain.com/` (or the base domain). The server rendered the complete HTML landing page (>60 KB), exceeding cron-job.org's limit and causing the failure.
+2. **Missing Endpoint Path / Headers:** You called the main site rather than the dedicated API endpoint, or cron-job.org was configured with `GET` on a route that returned HTML.
+
+---
+
+### Solution A: If your cron job is to keep Render awake (Keep-Alive Ping)
+- **URL**: `https://your-domain.com/ping`
+- **HTTP Method**: `GET`
+- **Output**: Returns a 2-byte response (`OK`) in under 5ms. Will **never** fail with "output too large".
+- **Schedule**: Every 10 or 14 minutes.
+
+---
+
+### Solution B: If your cron job is for the Monthly Rent Reminders
+- **URL**: `https://your-domain.com/api/send-rent-reminders?apiKey=YOUR_CRON_SECRET`
+  *(Or with test mode: `https://your-domain.com/api/send-rent-reminders?test=true&apiKey=YOUR_CRON_SECRET`)*
+- **HTTP Method**: Either `POST` or `GET` (both are supported).
+- **HTTP Headers (Optional if using query param)**:
+  - `x-api-key`: `<CRON_SECRET>`
+- **Output**: Minimal response (`"Triggered"`, `"Not last day"`, or `"Unauthorized"`).
+
+

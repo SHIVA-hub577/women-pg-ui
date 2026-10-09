@@ -269,11 +269,11 @@ const processRentReminders = async (isTest = false) => {
   }
 };
 
-// API Handler: POST /api/send-rent-reminders
+// API Handler: POST & GET /api/send-rent-reminders
 const sendRentReminders = async (req, res) => {
   try {
-    // 1. Secured API Key Validation
-    const apiKey = req.headers['x-api-key'];
+    // 1. Secured API Key Validation (supports x-api-key header or ?apiKey= / ?key= query param)
+    const apiKey = req.headers['x-api-key'] || req.query.apiKey || req.query.key;
     const expectedSecret = process.env.CRON_SECRET;
 
     if (!expectedSecret || apiKey !== expectedSecret) {
@@ -283,11 +283,11 @@ const sendRentReminders = async (req, res) => {
     // 2. Last Day Logic & Local Testing Support
     const isTest = req.query.test === 'true';
     if (!isTest && !isLastDayOfMonth()) {
-      return res.send("Not last day");
+      return res.status(200).send("Not last day");
     }
 
-    // 3. Non-blocking Immediate Response
-    res.send("Triggered");
+    // 3. Non-blocking Immediate Response (minimal output for cron services)
+    res.status(200).send("Triggered");
 
     // 4. Background Execution
     setImmediate(() => {
