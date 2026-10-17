@@ -3,158 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Allot New Resident Suite — Pujyasritha's Living">
   <title>Allot New Resident — Pujyasritha's Living</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="portal-admin">
   <%- include('../partials/header') %>
 
   <div class="app-container">
-    <%- include('../partials/sidebar') %>
+    <%- include('../partials/sidebar', { activePage: 'add-tenant' }) %>
 
     <main class="main-content">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div class="page-header">
         <div>
-          <h1>Allot New Resident to Room</h1>
-          <p style="color: var(--text-muted);">Enter resident details and assign a vacant or partially occupied PG room.</p>
+          <h1>Allot Resident to Suite</h1>
+          <p>Register new resident records and assign an available suite bed</p>
         </div>
-        <a href="/admin/rooms" class="btn btn-outline" style="width: auto;">&larr; Back to Rooms</a>
+        <div class="page-header-actions">
+          <a href="/admin/rooms" class="btn btn-outline" style="width: auto;">&larr; Back to Suites</a>
+        </div>
       </div>
 
       <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger"><%= error %></div>
+        <div class="alert alert-danger" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <%= error %>
+        </div>
       <% } %>
 
       <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-info"><%= success %></div>
+        <div class="alert alert-success" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/></svg>
+          <%= success %>
+        </div>
       <% } %>
 
-      <div class="card" style="max-width: 750px;">
-        <form action="/admin/tenants/new" method="POST" id="addTenantForm">
-          
-          <!-- Room Allotment Section -->
-          <div style="background: rgba(108, 99, 255, 0.05); border: 1px solid rgba(108, 99, 255, 0.2); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem;">
-            <h3 style="color: var(--primary); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              Step 1: Select Room & Sharing Type
-            </h3>
+      <div class="card" style="max-width: 840px;">
+        <div class="card-body">
+          <form action="/admin/tenants/new" method="POST" id="addTenantForm">
+            
+            <!-- Step 1: Suite Selection -->
+            <div class="section-card">
+              <div class="section-card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Step 1: Select Suite & Sharing Configuration
+              </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-              <!-- Sharing Type Filter -->
-              <div class="form-group" style="margin-bottom: 0;">
-                <label for="sharingFilter">Filter Room Type (Sharing)</label>
-                <select id="sharingFilter" class="form-control">
-                  <option value="all">All Sharing Types</option>
-                  <option value="1">1 Sharing Room</option>
-                  <option value="2">2 Sharing Room</option>
-                  <option value="3">3 Sharing Room</option>
-                  <option value="4">4 Sharing Room</option>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="sharingFilter">Filter Room Sharing Type</label>
+                  <select id="sharingFilter" class="form-control">
+                    <option value="all">All Sharing Types</option>
+                    <option value="1">1 Sharing Suite</option>
+                    <option value="2">2 Sharing Suite</option>
+                    <option value="3">3 Sharing Suite</option>
+                    <option value="4">4 Sharing Suite</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="roomNumber">Available Suite *</label>
+                  <select id="roomNumber" name="roomNumber" class="form-control" required>
+                    <option value="">-- Select Vacant / Partial Suite --</option>
+                    <% if (availableRooms && availableRooms.length > 0) { %>
+                      <% availableRooms.forEach(r => { %>
+                        <% 
+                          const filled = r.tenants ? r.tenants.length : 0;
+                          const statusLabel = r.status === 'Vacant' ? 'Vacant' : `Partially Occupied (${filled}/${r.capacity})`;
+                        %>
+                        <option 
+                          value="<%= r.roomNumber %>" 
+                          data-sharing="<%= r.sharingType %>"
+                          data-rent="<%= r.rent %>"
+                          data-advance="<%= r.advance %>"
+                        >
+                          Room <%= r.roomNumber %> &mdash; <%= r.sharingType %> Sharing (<%= statusLabel %>) &mdash; &#8377;<%= r.rent.toLocaleString('en-IN') %>/mo
+                        </option>
+                      <% }); %>
+                    <% } else { %>
+                      <option value="" disabled>No vacant or partially occupied suites available</option>
+                    <% } %>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Personal Details -->
+            <div style="margin-top: 1.5rem; margin-bottom: 1.25rem;">
+              <h3 style="font-size: 1.15rem; color: var(--text-primary); margin: 0 0 0.35rem;">Step 2: Resident Personal Details</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Profile information for account creation and ID verification</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.1rem;">
+              <div class="form-group">
+                <label for="name">Resident Full Name *</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Ananya Sharma" required>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email Address * (For Resident Login)</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="resident@example.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Contact Phone Number *</label>
+                <input type="tel" id="phone" name="phone" class="form-control" placeholder="9876543210" required pattern="^\+?[0-9]{10,15}$" title="Please enter a valid 10 to 15 digit phone number">
+              </div>
+
+              <div class="form-group">
+                <label for="emergencyContactNumber">Emergency Contact Number *</label>
+                <input type="tel" id="emergencyContactNumber" name="emergencyContactNumber" class="form-control" placeholder="9876543210" required pattern="^\+?[0-9]{10,15}$" title="Please enter a valid 10 to 15 digit emergency contact number">
+              </div>
+
+              <div class="form-group">
+                <label for="relation">Emergency Relation *</label>
+                <input type="text" id="relation" name="relation" class="form-control" placeholder="e.g. Father, Mother, Guardian" list="relationSuggestions" required>
+                <datalist id="relationSuggestions">
+                  <option value="Father">
+                  <option value="Mother">
+                  <option value="Guardian">
+                  <option value="Spouse">
+                  <option value="Sibling">
+                  <option value="Relative">
+                  <option value="Friend">
+                  <option value="Other">
+                </datalist>
+              </div>
+
+              <div class="form-group">
+                <label for="age">Resident Age</label>
+                <input type="number" id="age" name="age" class="form-control" placeholder="22" min="16" max="90">
+              </div>
+
+              <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" class="form-control">
+                  <option value="Female" selected>Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
 
-              <!-- Available Room Selection -->
-              <div class="form-group" style="margin-bottom: 0;">
-                <label for="roomNumber">Available Room *</label>
-                <select id="roomNumber" name="roomNumber" class="form-control" required>
-                  <option value="">-- Select Vacant / Partial Room --</option>
-                  <% if (availableRooms && availableRooms.length > 0) { %>
-                    <% availableRooms.forEach(r => { %>
-                      <% 
-                        const filled = r.tenants ? r.tenants.length : 0;
-                        const statusLabel = r.status === 'Vacant' ? 'Vacant' : `Partially Occupied (${filled}/${r.capacity})`;
-                      %>
-                      <option 
-                        value="<%= r.roomNumber %>" 
-                        data-sharing="<%= r.sharingType %>"
-                        data-rent="<%= r.rent %>"
-                        data-advance="<%= r.advance %>"
-                      >
-                        Room <%= r.roomNumber %> — <%= r.sharingType %> Sharing (<%= statusLabel %>) — ₹<%= r.rent.toLocaleString('en-IN') %>/mo
-                      </option>
-                    <% }); %>
-                  <% } else { %>
-                    <option value="" disabled>No vacant or partially occupied rooms available</option>
-                  <% } %>
-                </select>
+              <div class="form-group">
+                <label for="joiningDate">Move-In Date</label>
+                <input type="date" id="joiningDate" name="joiningDate" class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
+              </div>
+
+              <div class="form-group">
+                <label for="rent">Monthly Rent (&#8377;)</label>
+                <input type="number" id="rent" name="rent" class="form-control" placeholder="7500">
+              </div>
+
+              <div class="form-group">
+                <label for="advancePaid">Advance Security Deposit Paid (&#8377;)</label>
+                <input type="number" id="advancePaid" name="advancePaid" class="form-control" placeholder="15000">
               </div>
             </div>
-          </div>
 
-          <!-- Resident Details Section -->
-          <h3 style="margin-bottom: 1rem;">Step 2: Resident Personal Details</h3>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-            <div class="form-group">
-              <label for="name">Resident Full Name *</label>
-              <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Ananya Sharma" required>
+            <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-light); display: flex; gap: 1rem;">
+              <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.75rem 2rem;">
+                + Confirm Allotment & Save Resident
+              </button>
+              <a href="/admin/rooms" class="btn btn-outline" style="width: auto;">Cancel</a>
             </div>
-
-            <div class="form-group">
-              <label for="email">Email Address * (For Resident Login)</label>
-              <input type="email" id="email" name="email" class="form-control" placeholder="resident@example.com" required>
-            </div>
-
-            <div class="form-group">
-              <label for="phone">Phone Number *</label>
-              <input type="tel" id="phone" name="phone" class="form-control" placeholder="9876543210" required pattern="^\+?[0-9]{10,15}$" title="Please enter a valid 10 to 15 digit phone number">
-            </div>
-
-            <div class="form-group">
-              <label for="emergencyContactNumber">Emergency Contact Number *</label>
-              <input type="tel" id="emergencyContactNumber" name="emergencyContactNumber" class="form-control" placeholder="9876543210" required pattern="^\+?[0-9]{10,15}$" title="Please enter a valid 10 to 15 digit emergency contact number">
-            </div>
-
-            <div class="form-group">
-              <label for="relation">Relation * (e.g. Father, Mother, Guardian)</label>
-              <input type="text" id="relation" name="relation" class="form-control" placeholder="e.g. Father, Mother, Guardian" list="relationSuggestions" required>
-              <datalist id="relationSuggestions">
-                <option value="Father">
-                <option value="Mother">
-                <option value="Guardian">
-                <option value="Spouse">
-                <option value="Sibling">
-                <option value="Relative">
-                <option value="Friend">
-                <option value="Other">
-              </datalist>
-            </div>
-
-            <div class="form-group">
-              <label for="age">Age</label>
-              <input type="number" id="age" name="age" class="form-control" placeholder="22" min="16" max="90">
-            </div>
-
-            <div class="form-group">
-              <label for="gender">Gender</label>
-              <select id="gender" name="gender" class="form-control">
-                <option value="Female" selected>Female</option>
-                <option value="Male">Male</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="joiningDate">Joining Date</label>
-              <input type="date" id="joiningDate" name="joiningDate" class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
-            </div>
-
-            <div class="form-group">
-              <label for="rent">Monthly Rent (₹)</label>
-              <input type="number" id="rent" name="rent" class="form-control" placeholder="7500">
-            </div>
-
-            <div class="form-group">
-              <label for="advancePaid">Advance Deposit Paid (₹)</label>
-              <input type="number" id="advancePaid" name="advancePaid" class="form-control" placeholder="15000">
-            </div>
-          </div>
-
-          <div style="margin-top: 1.5rem;">
-            <button type="submit" class="btn btn-primary" style="padding: 0.85rem;">
-              + Allot Room & Save Resident
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </main>
   </div>

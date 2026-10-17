@@ -1,19 +1,24 @@
 <header class="navbar">
   <div class="nav-container">
     <a href="<%= user ? (user.role === 'admin' ? '/admin/dashboard' : (user.role === 'worker' ? '/worker/complaints' : '/tenant/profile')) : '/' %>" class="brand-logo">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
       Pujyasritha's Living
     </a>
 
     <% if (typeof hideNavLinks === 'undefined' || !hideNavLinks) { %>
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Navigation">
-        &#9776;
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Navigation" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
       </button>
 
-      <ul class="nav-links" id="navLinks">
+      <ul class="nav-links" id="navLinks" role="navigation" aria-label="Primary navigation">
         <% if (!user) { %>
           <li><a href="/" class="nav-link">Home</a></li>
-          <li><a href="/login" class="nav-link">Tenant Login</a></li>
+          <li><a href="/login" class="nav-link">Resident Login</a></li>
           <li><a href="/worker/login" class="nav-link">Worker Login</a></li>
           <li><a href="/admin/login" class="nav-link">Admin Login</a></li>
         <% } else if (user.role === 'admin') { %>
@@ -22,14 +27,14 @@
           <li><a href="/admin/tenants" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'tenants' ? 'active' : '' %>">Tenants</a></li>
           <li><a href="/auth/logout" class="nav-link btn-logout">Logout</a></li>
         <% } else if (user.role === 'tenant') { %>
-          <li><span class="nav-link" style="font-weight: 600; color: var(--primary);">Hi, <%= user.username %></span></li>
+          <li><span class="nav-link" style="font-weight:700;color:var(--primary);">Hi, <%= user.username %></span></li>
           <li><a href="/tenant/profile" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'profile' ? 'active' : '' %>">Profile</a></li>
           <li><a href="/tenant/room" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'room' ? 'active' : '' %>">My Room</a></li>
           <li><a href="/tenant/complaints" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'complaints' ? 'active' : '' %>">Complaints</a></li>
           <li><a href="/auth/logout" class="nav-link btn-logout">Logout</a></li>
         <% } else if (user.role === 'worker') { %>
-          <li><span class="nav-link" style="font-weight: 600; color: var(--primary);">Worker: <%= user.name || user.username %></span></li>
-          <li><a href="/worker/complaints" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'complaints' ? 'active' : '' %>">Complaints</a></li>
+          <li><span class="nav-link" style="font-weight:700;color:var(--primary);">Worker: <%= user.name || user.username %></span></li>
+          <li><a href="/worker/complaints" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'complaints' ? 'active' : '' %>">My Tasks</a></li>
           <li><a href="/auth/logout" class="nav-link btn-logout">Logout</a></li>
         <% } %>
       </ul>
@@ -41,7 +46,6 @@
   (function() {
     const path = window.location.pathname;
     const role = '<%= typeof user !== "undefined" && user ? user.role : "" %>';
-    
     if (path.startsWith('/tenant') || role === 'tenant') {
       document.body.classList.add('portal-tenant');
     } else if (path.startsWith('/worker') || role === 'worker') {
@@ -52,8 +56,13 @@
   })();
 
   <% if (typeof hideNavLinks === 'undefined' || !hideNavLinks) { %>
-    document.getElementById('hamburgerBtn')?.addEventListener('click', function() {
-      document.getElementById('navLinks')?.classList.toggle('active');
-    });
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const navLinks = document.getElementById('navLinks');
+    if (hamburgerBtn && navLinks) {
+      hamburgerBtn.addEventListener('click', function() {
+        const isOpen = navLinks.classList.toggle('active');
+        hamburgerBtn.setAttribute('aria-expanded', isOpen);
+      });
+    }
   <% } %>
 </script>

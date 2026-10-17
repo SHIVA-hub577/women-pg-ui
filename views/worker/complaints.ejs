@@ -3,160 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Worker Maintenance Operations Portal — Pujyasritha's Living">
   <title>Worker Maintenance Portal — Pujyasritha's Living</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="portal-worker">
   <%- include('../partials/header') %>
 
-  <div class="app-container" style="max-width: 1000px;">
+  <div class="app-container" style="max-width: 1040px;">
     <main class="main-content">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div class="page-header">
         <div>
-          <h1>Worker Maintenance Portal</h1>
-          <p style="color: var(--text-muted);">View assigned resident complaints, resolve issues, and upload resolution proof</p>
+          <h1>Maintenance Dispatch Portal</h1>
+          <p>Review assigned resident service requests, update maintenance status, and log resolution proofs</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <span class="badge badge-purple" style="font-size: 0.9rem; padding: 0.4rem 0.8rem;">
-            Worker: <%= user ? (user.name || user.username) : 'Maintenance Staff' %>
+        <div class="page-header-actions">
+          <span class="badge badge-amber" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
+            &#128736; Staff: <%= user ? (user.name || user.username) : 'Maintenance Specialist' %>
           </span>
         </div>
       </div>
 
       <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger"><%= error %></div>
+        <div class="alert alert-danger" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <%= error %>
+        </div>
       <% } %>
 
       <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-info"><%= success %></div>
+        <div class="alert alert-success" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/></svg>
+          <%= success %>
+        </div>
       <% } %>
 
-      <div class="card" style="margin-bottom: 1.5rem;">
-        <h2 style="margin-bottom: 1rem;">Assigned & Active Complaints (<%= complaints ? complaints.length : 0 %>)</h2>
+      <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+          <h3>Assigned Maintenance Queue (<%= complaints ? complaints.length : 0 %>)</h3>
+          <span class="badge badge-brand">Live Dispatch</span>
+        </div>
 
-        <% if (complaints && complaints.length > 0) { %>
-          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <% complaints.forEach(c => { %>
-              <div style="border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.25rem; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; padding-bottom: 0.8rem; border-bottom: 1px solid #f0f0f0;">
-                  <div>
-                    <span class="badge badge-purple" style="font-size: 0.9rem;">Room <%= c.roomNumber %></span>
-                    <strong style="margin-left: 0.5rem; color: var(--text-main);"><%= c.tenantName %></strong>
-                    <span style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.4rem;">(ID: <%= c.tenantId %>)</span>
-                  </div>
-                  <div>
-                    <% if (c.status === 'Resolved') { %>
-                      <span class="badge badge-green">✔ Resolved</span>
-                    <% } else if (c.status === 'In Progress') { %>
-                      <span class="badge badge-yellow">⚡ In Progress</span>
-                    <% } else { %>
-                      <span class="badge badge-red">🚨 Raised</span>
-                    <% } %>
-                    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;"><%= c.raisedAt ? new Date(c.raisedAt).toLocaleString('en-IN') : '' %></span>
-                  </div>
-                </div>
-
-                <!-- Contact & Description -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                  <div>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Resident Contact</p>
-                    <p style="font-weight: 600; font-size: 0.9rem; margin: 0;">📞 <%= c.tenantPhone || 'N/A' %></p>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">✉️ <%= c.tenantEmail || 'N/A' %></p>
-                  </div>
-                  <div>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Complaint Description</p>
-                    <p style="font-size: 0.95rem; line-height: 1.4; margin: 0; background: #fafafa; padding: 0.6rem; border-left: 3px solid var(--primary); border-radius: 4px;"><%= c.description %></p>
-                  </div>
-                </div>
-
-                <!-- Complaint Photo Attached by Tenant -->
-                <% if (c.photo) { %>
-                  <div style="margin-bottom: 1rem;">
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem;">Tenant Attached Evidence Photo:</p>
-                    <a href="<%= c.photo %>" target="_blank">
-                      <img src="<%= c.photo %>" alt="Complaint Photo" style="max-width: 180px; max-height: 140px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
-                    </a>
-                  </div>
-                <% } %>
-
-                <!-- Progress Updates Timeline -->
-                <% if (c.updates && c.updates.length > 0) { %>
-                  <div style="margin-top: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.9rem;">
-                    <h4 style="margin: 0 0 0.6rem 0; font-size: 0.85rem; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Progress Updates History</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                      <% c.updates.forEach(up => { %>
-                        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0.6rem 0.8rem; font-size: 0.85rem;">
-                          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;">
-                            <strong>
-                              <% if (up.authorRole === 'worker') { %>
-                                🛠️ <%= up.authorName %> (Worker)
-                              <% } else if (up.authorRole === 'admin') { %>
-                                🛡️ <%= up.authorName %> (Admin)
-                              <% } else { %>
-                                👤 <%= up.authorName %> (Resident)
-                              <% } %>
-                            </strong>
-                            <span style="color: #94a3b8; font-size: 0.75rem;"><%= up.createdAt ? new Date(up.createdAt).toLocaleString('en-IN') : '' %></span>
-                          </div>
-                          <p style="margin: 0; color: #334155;"><%= up.message %></p>
-                          <% if (up.photo) { %>
-                            <div style="margin-top: 0.4rem;">
-                              <a href="<%= up.photo %>" target="_blank">
-                                <img src="<%= up.photo %>" alt="Update Photo" style="max-width: 120px; max-height: 90px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
-                              </a>
-                            </div>
-                          <% } %>
-                        </div>
-                      <% }); %>
+        <div class="card-body">
+          <% if (complaints && complaints.length > 0) { %>
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+              <% complaints.forEach(c => { %>
+                <div class="complaint-card">
+                  <div class="complaint-card-accent <%= c.status === 'Resolved' ? 'complaint-card-accent-resolved' : (c.status === 'In Progress' ? 'complaint-card-accent-progress' : 'complaint-card-accent-raised') %>"></div>
+                  
+                  <div class="complaint-card-body">
+                    <!-- Top header row -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-light);">
+                      <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                        <span class="badge badge-brand" style="font-size: 0.85rem;">Suite <%= c.roomNumber %></span>
+                        <strong style="color: var(--text-primary); font-size: 0.95rem;"><%= c.tenantName %></strong>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">(ID: <%= c.tenantId %>)</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <% if (c.status === 'Resolved') { %>
+                          <span class="badge badge-green">&#10004; Resolved</span>
+                        <% } else if (c.status === 'In Progress') { %>
+                          <span class="badge badge-amber badge-pulse">&#9889; In Progress</span>
+                        <% } else { %>
+                          <span class="badge badge-red">&#128680; Urgent / Raised</span>
+                        <% } %>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);"><%= c.raisedAt ? new Date(c.raisedAt).toLocaleString('en-IN') : '' %></span>
+                      </div>
                     </div>
-                  </div>
-                <% } %>
 
-                <!-- Resolution Information if Resolved -->
-                <% if (c.status === 'Resolved') { %>
-                  <div style="margin-top: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 0.9rem; color: #166534;">
-                    <h4 style="margin: 0 0 0.4rem 0; font-size: 0.9rem; color: #15803d;">✔ Resolution Details</h4>
-                    <p style="margin: 0; font-size: 0.9rem;"><strong>Resolved By:</strong> <%= c.resolvedByName || 'Staff' %> (<%= c.resolvedByRole || 'Worker' %>)</p>
-                    <p style="margin: 0.3rem 0 0 0; font-size: 0.9rem;"><strong>Resolution Note:</strong> <%= c.resolutionNote %></p>
-                    <% if (c.resolutionPhoto) { %>
-                      <div style="margin-top: 0.5rem;">
-                        <p style="font-size: 0.8rem; margin-bottom: 0.3rem;">Resolution Proof Image:</p>
-                        <a href="<%= c.resolutionPhoto %>" target="_blank">
-                          <img src="<%= c.resolutionPhoto %>" alt="Resolution Photo" style="max-width: 180px; max-height: 130px; object-fit: cover; border-radius: 6px; border: 1px solid #bbf7d0;">
+                    <!-- Resident Contact & Issue -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1rem;">
+                      <div style="background: var(--surface-canvas); padding: 0.85rem 1rem; border-radius: 12px; border: 1px solid var(--border-light);">
+                        <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0 0 0.35rem;">Resident Contact</p>
+                        <p style="font-weight: 600; font-size: 0.9rem; margin: 0; color: var(--text-primary);">
+                          &#128222; <a href="tel:<%= c.tenantPhone %>" style="color:var(--primary);"><%= c.tenantPhone || 'N/A' %></a>
+                        </p>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.25rem 0 0;">
+                          &#9993; <%= c.tenantEmail || 'N/A' %>
+                        </p>
+                      </div>
+
+                      <div style="background: var(--surface-canvas); padding: 0.85rem 1rem; border-radius: 12px; border: 1px solid var(--border-light);">
+                        <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0 0 0.35rem;">Issue Details</p>
+                        <p style="font-size: 0.92rem; line-height: 1.5; margin: 0; color: var(--text-primary);"><%= c.description %></p>
+                      </div>
+                    </div>
+
+                    <!-- Tenant Photo -->
+                    <% if (c.photo) { %>
+                      <div style="margin-bottom: 1rem;">
+                        <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.35rem;">Resident Attached Photo:</p>
+                        <a href="<%= c.photo %>" target="_blank" style="display: inline-block;">
+                          <img src="<%= c.photo %>" alt="Complaint Photo" style="max-width: 180px; max-height: 130px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-light);">
                         </a>
                       </div>
                     <% } %>
-                  </div>
-                <% } else { %>
-                  <!-- Action Form for Worker (Mark Resolved) -->
-                  <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
-                    <div style="background: rgba(34, 197, 94, 0.03); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 6px; padding: 1rem; max-width: 500px;">
-                      <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #166534;">✔ Mark Complaint as Resolved</h4>
-                      <form action="/worker/complaints/<%= c.id %>/resolve" method="POST" enctype="multipart/form-data">
-                        <div class="form-group" style="margin-bottom: 0.75rem;">
-                          <input type="text" name="resolutionNote" class="form-control" placeholder="Describe resolution details..." required style="font-size: 0.85rem; padding: 0.5rem 0.75rem;">
+
+                    <!-- Timeline -->
+                    <% if (c.updates && c.updates.length > 0) { %>
+                      <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+                        <h4 style="margin: 0 0 0.6rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.06em;">Status & Update Log</h4>
+                        <div class="timeline">
+                          <% c.updates.forEach(up => { %>
+                            <div class="timeline-item <%= up.authorRole === 'worker' ? 'timeline-item-worker' : (up.authorRole === 'admin' ? 'timeline-item-admin' : 'timeline-item-tenant') %>">
+                              <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.2rem;">
+                                <strong style="font-size: 0.85rem;">
+                                  <% if (up.authorRole === 'worker') { %>
+                                    &#128736; <%= up.authorName %> (Staff)
+                                  <% } else if (up.authorRole === 'admin') { %>
+                                    &#128737; <%= up.authorName %> (Admin)
+                                  <% } else { %>
+                                    &#128100; <%= up.authorName %> (Resident)
+                                  <% } %>
+                                </strong>
+                                <span style="color: var(--text-muted); font-size: 0.72rem;"><%= up.createdAt ? new Date(up.createdAt).toLocaleString('en-IN') : '' %></span>
+                              </div>
+                              <p style="margin: 0; font-size: 0.88rem; color: var(--text-secondary);"><%= up.message %></p>
+                              <% if (up.photo) { %>
+                                <div style="margin-top: 0.35rem;">
+                                  <a href="<%= up.photo %>" target="_blank">
+                                    <img src="<%= up.photo %>" alt="Update Photo" style="max-width: 120px; max-height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-light);">
+                                  </a>
+                                </div>
+                              <% } %>
+                            </div>
+                          <% }); %>
                         </div>
-                        <div class="form-group" style="margin-bottom: 0.75rem;">
-                          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Upload Resolution Proof Photo (Optional):</label>
-                          <input type="file" name="resolutionPhoto" accept="image/*" class="form-control" style="font-size: 0.8rem; padding: 0.3rem;">
+                      </div>
+                    <% } %>
+
+                    <!-- Resolution Information or Action Form -->
+                    <% if (c.status === 'Resolved') { %>
+                      <div style="margin-top: 1.25rem; background: #f2faf6; border: 1px solid #bde8d2; border-radius: 12px; padding: 1.1rem 1.25rem; color: #1f4d36;">
+                        <h4 style="margin: 0 0 0.4rem; font-size: 0.88rem; color: #2d6b4a; text-transform: uppercase; letter-spacing: 0.05em;">&#10004; Work Completed & Verified</h4>
+                        <p style="margin: 0; font-size: 0.88rem;"><strong>Resolved By:</strong> <%= c.resolvedByName || 'Staff' %> (<%= c.resolvedByRole || 'Worker' %>)</p>
+                        <p style="margin: 0.3rem 0 0; font-size: 0.92rem; color: #1a4d34;"><strong>Resolution Notes:</strong> <%= c.resolutionNote %></p>
+                        <% if (c.resolutionPhoto) { %>
+                          <div style="margin-top: 0.6rem;">
+                            <a href="<%= c.resolutionPhoto %>" target="_blank">
+                              <img src="<%= c.resolutionPhoto %>" alt="Resolution Photo" style="max-width: 180px; max-height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid #bde8d2;">
+                            </a>
+                          </div>
+                        <% } %>
+                      </div>
+                    <% } else { %>
+                      <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border-light);">
+                        <div class="section-card" style="margin-bottom: 0; max-width: 600px; background: rgba(184,118,46,0.05); border-color: rgba(184,118,46,0.25);">
+                          <div class="section-card-title" style="color: #9e5900; margin-bottom: 0.75rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Complete Work & Close Issue
+                          </div>
+                          <form action="/worker/complaints/<%= c.id %>/resolve" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                              <label for="resolutionNote_<%= c.id %>">Resolution Report / Actions Taken *</label>
+                              <input type="text" id="resolutionNote_<%= c.id %>" name="resolutionNote" class="form-control" placeholder="e.g., Repaired pipe leak, replaced washer and tested flow..." required>
+                            </div>
+                            <div class="form-group">
+                              <label for="resolutionPhoto_<%= c.id %>">Upload Verification Proof Photo (Optional):</label>
+                              <input type="file" id="resolutionPhoto_<%= c.id %>" name="resolutionPhoto" accept="image/*" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-amber" style="width: 100%;">
+                              &#10004; Mark Resolved & Notify Admin & Resident
+                            </button>
+                          </form>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; background-color: #22C55E; border-color: #22C55E; font-size: 0.85rem; padding: 0.5rem;">
-                          ✔ Mark Resolved & Notify Admin/Tenant
-                        </button>
-                      </form>
-                    </div>
+                      </div>
+                    <% } %>
+
                   </div>
-                <% } %>
-              </div>
-            <% }); %>
-          </div>
-        <% } else { %>
-          <div style="text-align: center; color: var(--text-muted); padding: 3rem 1.5rem; background: rgba(255, 255, 255, 0.4); border-radius: 14px; border: 1px dashed var(--border-color);">
-            <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🎉</span>
-            <strong style="color: var(--primary); font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">No complaints yet 🎉</strong>
-            <p style="font-size: 0.9rem;">No active maintenance complaints assigned at the moment.</p>
-          </div>
-        <% } %>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div style="text-align: center; color: var(--text-muted); padding: 3rem 1.5rem;">
+              <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">&#127881;</span>
+              <strong style="color: var(--primary); font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">No Maintenance Requests Assigned</strong>
+              <p style="font-size: 0.9rem; margin: 0;">Your queue is currently clear! New tasks will appear here when assigned by management.</p>
+            </div>
+          <% } %>
+        </div>
       </div>
     </main>
   </div>

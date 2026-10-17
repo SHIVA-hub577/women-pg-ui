@@ -3,95 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Remove Resident — Pujyasritha's Living</title>
+  <meta name="description" content="Resident Departure & Removal Process — Pujyasritha's Living">
+  <title>Resident Departure & Removal — Pujyasritha's Living</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="portal-admin">
   <%- include('../partials/header') %>
 
   <div class="app-container">
     <%- include('../partials/sidebar', { activePage: 'remove-tenant' }) %>
 
     <main class="main-content">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div class="page-header">
         <div>
-          <h1 style="color: var(--primary);">Remove Resident from Hostel</h1>
-          <p style="color: var(--text-muted);">Select resident via cascading filters to send a 6-digit verification OTP code.</p>
+          <h1>Resident Departure & Removal</h1>
+          <p>Initiate departure verification with 3-step cascading selection and email OTP authorization</p>
         </div>
-        <a href="/admin/tenants" class="btn btn-outline" style="width: auto;">&larr; Back to Directory</a>
+        <div class="page-header-actions">
+          <a href="/admin/tenants" class="btn btn-outline" style="width: auto;">&larr; Residents Directory</a>
+        </div>
       </div>
 
       <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger"><%= error %></div>
+        <div class="alert alert-danger" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <%= error %>
+        </div>
       <% } %>
 
       <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-info"><%= success %></div>
+        <div class="alert alert-success" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/></svg>
+          <%= success %>
+        </div>
       <% } %>
 
-      <div class="card" style="max-width: 750px; margin-top: 1rem;">
-        <form action="#" method="POST" id="removeTenantForm">
-          
-          <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h3 style="color: #DC2626; margin-bottom: 0.5rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              Destructive Action: Resident Removal Selection
-            </h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.25rem;">
-              Initiating removal emails a 6-digit verification OTP to the resident. You must enter the OTP on the next screen to finalize removal.
-            </p>
-
-            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-              
-              <!-- 1. Sharing Type Dropdown -->
-              <div class="form-group" style="margin-bottom: 0;">
-                <label for="sharingFilter" style="font-weight: 600; display: block; margin-bottom: 0.4rem;">1. Select Room Sharing Type <span style="color: #DC2626;">*</span></label>
-                <select id="sharingFilter" class="form-control">
-                  <option value="">-- Select Sharing Type --</option>
-                  <option value="all">All Sharing Types</option>
-                  <option value="1">1 Sharing Room</option>
-                  <option value="2">2 Sharing Room</option>
-                  <option value="3">3 Sharing Room</option>
-                  <option value="4">4 Sharing Room</option>
-                </select>
+      <div class="card" style="max-width: 800px;">
+        <div class="card-body">
+          <form action="#" method="POST" id="removeTenantForm">
+            
+            <div class="danger-zone">
+              <div class="danger-zone-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Departure Authorization Protocol
               </div>
+              <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; margin: 0 0 1.25rem;">
+                Initiating departure sends a secure 6-digit OTP to the resident's registered email address. This prevents accidental de-allocations and ensures mutual departure confirmation.
+              </p>
 
-              <!-- 2. Room Number Dropdown (Cascading) -->
-              <div class="form-group" style="margin-bottom: 0;">
-                <label for="roomSelect" style="font-weight: 600; display: block; margin-bottom: 0.4rem;">2. Select Room Number <span style="color: #DC2626;">*</span></label>
-                <select id="roomSelect" name="roomNumber" class="form-control" disabled required>
-                  <option value="">-- Select Room Number --</option>
-                  <% if (occupiedRooms && occupiedRooms.length > 0) { %>
-                    <% occupiedRooms.forEach(r => { %>
-                      <option 
-                        value="<%= r.roomNumber %>" 
-                        data-sharing="<%= r.sharingType %>"
-                        data-tenants='<%= JSON.stringify(r.tenants || []) %>'
-                      >
-                        Room <%= r.roomNumber %> — <%= r.sharingType %> Sharing (<%= r.tenants ? r.tenants.length : 0 %> occupants)
-                      </option>
-                    <% }); %>
-                  <% } %>
-                </select>
+              <!-- Cascading Fields -->
+              <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                
+                <!-- 1. Sharing Type Dropdown -->
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="sharingFilter">1. Select Suite Sharing Configuration <span style="color: #b91c1c;">*</span></label>
+                  <select id="sharingFilter" class="form-control">
+                    <option value="">-- Select Sharing Configuration --</option>
+                    <option value="all">All Sharing Types</option>
+                    <option value="1">1 Sharing Suite</option>
+                    <option value="2">2 Sharing Suite</option>
+                    <option value="3">3 Sharing Suite</option>
+                    <option value="4">4 Sharing Suite</option>
+                  </select>
+                </div>
+
+                <!-- 2. Room Number Dropdown (Cascading) -->
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="roomSelect">2. Select Occupied Suite <span style="color: #b91c1c;">*</span></label>
+                  <select id="roomSelect" name="roomNumber" class="form-control" disabled required>
+                    <option value="">-- Select Suite Number --</option>
+                    <% if (occupiedRooms && occupiedRooms.length > 0) { %>
+                      <% occupiedRooms.forEach(r => { %>
+                        <option 
+                          value="<%= r.roomNumber %>" 
+                          data-sharing="<%= r.sharingType %>"
+                          data-tenants='<%= JSON.stringify(r.tenants || []) %>'
+                        >
+                          Room <%= r.roomNumber %> &mdash; <%= r.sharingType %> Sharing (<%= r.tenants ? r.tenants.length : 0 %> occupants)
+                        </option>
+                      <% }); %>
+                    <% } %>
+                  </select>
+                </div>
+
+                <!-- 3. Tenant Dropdown (Cascading) -->
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="tenantSelect">3. Select Resident Departing <span style="color: #b91c1c;">*</span></label>
+                  <select id="tenantSelect" class="form-control" disabled required>
+                    <option value="">-- Select Resident --</option>
+                  </select>
+                </div>
+
               </div>
-
-              <!-- 3. Tenant Dropdown (Cascading) -->
-              <div class="form-group" style="margin-bottom: 0;">
-                <label for="tenantSelect" style="font-weight: 600; display: block; margin-bottom: 0.4rem;">3. Select Resident to Remove <span style="color: #DC2626;">*</span></label>
-                <select id="tenantSelect" class="form-control" disabled required>
-                  <option value="">-- Select Resident --</option>
-                </select>
-              </div>
-
             </div>
-          </div>
 
-          <div style="margin-top: 1.5rem;">
-            <button type="submit" id="submitBtn" class="btn" style="background-color: #DC2626; color: #FFFFFF; width: 100%; padding: 0.85rem; font-weight: 600; opacity: 0.5; cursor: not-allowed;" disabled>
-              Send Removal OTP to Resident
-            </button>
-          </div>
-        </form>
+            <div style="margin-top: 1.5rem;">
+              <button type="submit" id="submitBtn" class="btn btn-danger" disabled>
+                Generate & Send Departure OTP Code
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
   </div>
@@ -112,8 +127,6 @@
       tenantSelect.innerHTML = '<option value="">-- Select Resident --</option>';
       tenantSelect.disabled = true;
       submitBtn.disabled = true;
-      submitBtn.style.opacity = '0.5';
-      submitBtn.style.cursor = 'not-allowed';
 
       if (!val) {
         roomSelect.disabled = true;
@@ -136,8 +149,6 @@
     roomSelect.addEventListener('change', function() {
       tenantSelect.innerHTML = '<option value="">-- Select Resident --</option>';
       submitBtn.disabled = true;
-      submitBtn.style.opacity = '0.5';
-      submitBtn.style.cursor = 'not-allowed';
 
       const selectedOpt = this.options[this.selectedIndex];
       if (!selectedOpt || !selectedOpt.value) {
@@ -166,13 +177,9 @@
       const selectedOpt = this.options[this.selectedIndex];
       if (selectedOpt && selectedOpt.value) {
         submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        submitBtn.style.cursor = 'pointer';
         removeForm.action = `/admin/tenants/${selectedOpt.value}/request-removal`;
       } else {
         submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.5';
-        submitBtn.style.cursor = 'not-allowed';
       }
     });
 

@@ -3,78 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hostel Rooms & Inventory Directory — Pujyasritha's Living">
   <title>Rooms Directory — Pujyasritha's Living</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="portal-admin">
   <%- include('../partials/header') %>
 
   <div class="app-container">
-    <%- include('../partials/sidebar') %>
+    <%- include('../partials/sidebar', { activePage: 'rooms' }) %>
 
     <main class="main-content">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div class="page-header">
         <div>
-          <h1>Rooms Overview</h1>
-          <p style="color: var(--text-muted);">Overview of PG rooms, sharing capacity, and current occupants</p>
+          <h1>Suites & Room Directory</h1>
+          <p>Inventory of residential rooms, sharing capacity, pricing, and assigned occupants</p>
         </div>
-        <a href="/admin/tenants/new" class="btn btn-primary" style="width: auto;">+ Add New Resident</a>
+        <div class="page-header-actions">
+          <a href="/admin/tenants/new" class="btn btn-primary" style="width: auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Allot New Resident
+          </a>
+        </div>
       </div>
 
       <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger"><%= error %></div>
+        <div class="alert alert-danger" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <%= error %>
+        </div>
       <% } %>
 
       <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-info"><%= success %></div>
+        <div class="alert alert-success" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/></svg>
+          <%= success %>
+        </div>
       <% } %>
 
       <div class="card">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Room No</th>
-                <th>Sharing</th>
-                <th>Monthly Rent</th>
-                <th>Advance Required</th>
-                <th>Capacity</th>
-                <th>Current Occupants</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% rooms.forEach(room => { %>
+        <div class="card-header">
+          <h2>Suites Master List (<%= rooms ? rooms.length : 0 %>)</h2>
+          <span class="badge badge-brand">All Floors</span>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
                 <tr>
-                  <td><strong>Room <%= room.roomNumber %></strong></td>
-                  <td><%= room.sharingType %> Sharing</td>
-                  <td>₹<%= room.rent.toLocaleString('en-IN') %></td>
-                  <td>₹<%= room.advance.toLocaleString('en-IN') %></td>
-                  <td><%= room.capacity %> beds</td>
-                  <td>
-                    <% if (room.tenants && room.tenants.length > 0) { %>
-                      <ul style="list-style: none; padding-left: 0;">
-                        <% room.tenants.forEach(t => { %>
-                          <li>• <%= t.name %> (<%= t.phone %>)</li>
-                        <% }); %>
-                      </ul>
-                    <% } else { %>
-                      <span style="color: var(--text-muted);">None</span>
-                    <% } %>
-                  </td>
-                  <td>
-                    <% if (room.status === 'Occupied') { %>
-                      <span class="badge badge-green">Occupied</span>
-                    <% } else if (room.status === 'Vacant') { %>
-                      <span class="badge badge-yellow">Vacant</span>
-                    <% } else { %>
-                      <span class="badge badge-purple"><%= room.status %></span>
-                    <% } %>
-                  </td>
+                  <th>Suite #</th>
+                  <th>Sharing Type</th>
+                  <th>Monthly Rent</th>
+                  <th>Advance Deposit</th>
+                  <th>Capacity</th>
+                  <th>Current Occupants</th>
+                  <th>Status</th>
                 </tr>
-              <% }); %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% rooms.forEach(room => { %>
+                  <tr>
+                    <td>
+                      <strong style="color: var(--primary); font-size: 0.95rem;">Room <%= room.roomNumber %></strong>
+                    </td>
+                    <td><%= room.sharingType %> Sharing</td>
+                    <td style="font-weight: 600;">&#8377;<%= room.rent.toLocaleString('en-IN') %></td>
+                    <td>&#8377;<%= room.advance.toLocaleString('en-IN') %></td>
+                    <td><%= room.capacity %> beds</td>
+                    <td>
+                      <% if (room.tenants && room.tenants.length > 0) { %>
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                          <% room.tenants.forEach(t => { %>
+                            <div style="font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary-mid);"></span>
+                              <strong><%= t.name %></strong>
+                              <span style="color: var(--text-muted); font-size: 0.78rem;">(<%= t.phone %>)</span>
+                            </div>
+                          <% }); %>
+                        </div>
+                      <% } else { %>
+                        <span style="color: var(--text-faint); font-style: italic;">No residents assigned</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (room.status === 'Occupied') { %>
+                        <span class="badge badge-green">Occupied</span>
+                      <% } else if (room.status === 'Vacant') { %>
+                        <span class="badge badge-amber">Vacant</span>
+                      <% } else { %>
+                        <span class="badge badge-brand"><%= room.status %></span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </main>

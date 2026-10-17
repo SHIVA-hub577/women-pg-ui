@@ -3,28 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Removed Tenants List — Pujyasritha's Living</title>
+  <meta name="description" content="Departed Residents Archive & Audit Log — Pujyasritha's Living">
+  <title>Departed Residents Archive — Pujyasritha's Living</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="portal-admin">
   <%- include('../partials/header') %>
 
   <div class="app-container">
-    <%- include('../partials/sidebar') %>
+    <%- include('../partials/sidebar', { activePage: 'removed-tenants' }) %>
 
     <main class="main-content">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div class="page-header">
         <div>
-          <h1>Removed Tenants List</h1>
-          <p style="color: var(--text-muted);">Historical log of all removed residents stored securely in database</p>
+          <h1>Departed Residents Archive</h1>
+          <p>Permanent historical ledger of former residents, departure timestamps, and auditor logs</p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <div class="page-header-actions">
           <!-- Month Filter Dropdown -->
-          <form action="/admin/removed-tenants" method="GET" style="display: flex; align-items: center; gap: 0.5rem;">
-            <label for="month" style="font-size: 0.85rem; font-weight: 600; white-space: nowrap;">Filter Month:</label>
-            <select id="month" name="month" class="form-control" onchange="this.form.submit()" style="width: auto; padding: 0.4rem 0.8rem;">
-              <option value="all" <%= typeof selectedMonth !== 'undefined' && selectedMonth === 'all' ? 'selected' : '' %>>All (All Time)</option>
+          <form action="/admin/removed-tenants" method="GET" style="display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+            <label for="month" style="font-size: 0.82rem; font-weight: 600; white-space: nowrap; margin-bottom: 0;">Filter:</label>
+            <select id="month" name="month" class="form-control" onchange="this.form.submit()" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.85rem;">
+              <option value="all" <%= typeof selectedMonth !== 'undefined' && selectedMonth === 'all' ? 'selected' : '' %>>All Time Records</option>
               <% if (typeof validMonths !== 'undefined' && validMonths && validMonths.length > 0) { %>
                 <% validMonths.forEach(m => { %>
                   <option value="<%= m %>" <%= typeof selectedMonth !== 'undefined' && m === selectedMonth ? 'selected' : '' %>>
@@ -35,96 +38,121 @@
             </select>
           </form>
 
-          <a href="/admin/removed-tenants/email?month=<%= typeof selectedMonth !== 'undefined' ? selectedMonth : 'all' %>" class="btn btn-primary" style="width: auto; display: flex; align-items: center; gap: 0.5rem;" onclick="return confirm('Send removed tenants report to your admin Gmail address?')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Send to Mail
+          <a href="/admin/removed-tenants/email?month=<%= typeof selectedMonth !== 'undefined' ? selectedMonth : 'all' %>" class="btn btn-primary btn-sm" style="width: auto; display: flex; align-items: center; gap: 0.4rem;" onclick="return confirm('Send departed residents audit report to your admin email?')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email Archive Report
           </a>
         </div>
       </div>
 
       <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger"><%= error %></div>
+        <div class="alert alert-danger" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <%= error %>
+        </div>
       <% } %>
 
       <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-info"><%= success %></div>
+        <div class="alert alert-success" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/></svg>
+          <%= success %>
+        </div>
       <% } %>
 
       <div class="metric-grid" style="margin-bottom: 1.5rem;">
         <div class="metric-card">
-          <div class="metric-title">Removed Tenants (<%= typeof selectedMonth !== 'undefined' && selectedMonth !== 'all' ? selectedMonth : 'All Time' %>)</div>
-          <div class="metric-value" style="color: #EF4444;"><%= removedTenants ? removedTenants.length : 0 %></div>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Stored permanently in database</p>
+          <div class="metric-icon metric-icon-brand">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div>
+            <div class="metric-title">Archived Departures (<%= typeof selectedMonth !== 'undefined' && selectedMonth !== 'all' ? selectedMonth : 'All Time' %>)</div>
+            <div class="metric-value"><%= removedTenants ? removedTenants.length : 0 %></div>
+            <div class="metric-sub">Stored permanently in database</div>
+          </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Tenant ID</th>
-                <th>Name</th>
-                <th>Room No</th>
-                <th>Phone</th>
-                <th>Emergency Contact</th>
-                <th>Email</th>
-                <th>Rent / Advance</th>
-                <th>Joining Date</th>
-                <th>Removed Date</th>
-                <th>Removed By</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% if (removedTenants && removedTenants.length > 0) { %>
-                <% removedTenants.forEach(t => { %>
-                  <tr>
-                    <td><strong><%= t.tenantId %></strong></td>
-                    <td>
-                      <div style="font-weight: 600;"><%= t.name %></div>
-                      <% if (t.age || t.gender) { %>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);"><%= t.gender || '' %> <%= t.age ? '(' + t.age + ' yrs)' : '' %></div>
-                      <% } %>
-                    </td>
-                    <td><span class="badge badge-purple">Room <%= t.roomNumber %></span></td>
-                    <td><%= t.phone || 'N/A' %></td>
-                    <td>
-                      <% if (t.emergencyContactNumber) { %>
-                        <div><%= t.emergencyContactNumber %></div>
-                        <% if (t.relation) { %>
-                          <div style="font-size: 0.75rem; color: var(--text-muted);">(<%= t.relation %>)</div>
-                        <% } %>
-                      <% } else { %>
-                        <span style="color: var(--text-muted);">N/A</span>
-                      <% } %>
-                    </td>
-                    <td><%= t.email || 'N/A' %></td>
-                    <td>
-                      <div>₹<%= (t.rent || 0).toLocaleString('en-IN') %></div>
-                      <div style="font-size: 0.75rem; color: var(--text-muted);">Adv: ₹<%= (t.advancePaid || 0).toLocaleString('en-IN') %></div>
-                    </td>
-                    <td><%= t.joiningDate ? new Date(t.joiningDate).toLocaleDateString('en-IN') : 'N/A' %></td>
-                    <td>
-                      <div style="color: #EF4444; font-weight: 500;">
-                        <%= t.removedAt ? new Date(t.removedAt).toLocaleDateString('en-IN') : 'N/A' %>
-                      </div>
-                      <div style="font-size: 0.75rem; color: var(--text-muted);">
-                        <%= t.removedAt ? new Date(t.removedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '' %>
-                      </div>
-                    </td>
-                    <td><span class="badge badge-gray"><%= t.removedBy || 'admin' %></span></td>
-                  </tr>
-                <% }); %>
-              <% } else { %>
+        <div class="card-header">
+          <h2>Departure Audit Trail</h2>
+          <span class="badge badge-brand">Immutable Log</span>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
                 <tr>
-                  <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 0.5rem auto; display: block; opacity: 0.5;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    No removed tenants found in database for <%= typeof selectedMonth !== 'undefined' && selectedMonth !== 'all' ? selectedMonth : 'selected period' %>.
-                  </td>
+                  <th>Resident ID</th>
+                  <th>Full Name</th>
+                  <th>Former Suite</th>
+                  <th>Phone Number</th>
+                  <th>Emergency Contact</th>
+                  <th>Email</th>
+                  <th>Rent / Deposit</th>
+                  <th>Move-in Date</th>
+                  <th>Departure Date</th>
+                  <th>Authorized By</th>
                 </tr>
-              <% } %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% if (removedTenants && removedTenants.length > 0) { %>
+                  <% removedTenants.forEach(t => { %>
+                    <tr>
+                      <td>
+                        <strong style="color: var(--primary); font-family: monospace; font-size: 0.9rem;"><%= t.tenantId %></strong>
+                      </td>
+                      <td>
+                        <div style="font-weight: 600; color: var(--text-primary);"><%= t.name %></div>
+                        <% if (t.age || t.gender) { %>
+                          <div style="font-size: 0.75rem; color: var(--text-muted);"><%= t.gender || '' %> <%= t.age ? '(' + t.age + ' yrs)' : '' %></div>
+                        <% } %>
+                      </td>
+                      <td>
+                        <span class="badge badge-brand">Suite <%= t.roomNumber %></span>
+                      </td>
+                      <td><%= t.phone || 'N/A' %></td>
+                      <td>
+                        <% if (t.emergencyContactNumber) { %>
+                          <div><%= t.emergencyContactNumber %></div>
+                          <% if (t.relation) { %>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">(<%= t.relation %>)</div>
+                          <% } %>
+                        <% } else { %>
+                          <span style="color: var(--text-faint);">N/A</span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <span style="font-size: 0.85rem;"><%= t.email || 'N/A' %></span>
+                      </td>
+                      <td>
+                        <div style="font-weight: 600;">&#8377;<%= (t.rent || 0).toLocaleString('en-IN') %></div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Deposit: &#8377;<%= (t.advancePaid || 0).toLocaleString('en-IN') %></div>
+                      </td>
+                      <td><%= t.joiningDate ? new Date(t.joiningDate).toLocaleDateString('en-IN') : 'N/A' %></td>
+                      <td>
+                        <div style="color: #b91c1c; font-weight: 600;">
+                          <%= t.removedAt ? new Date(t.removedAt).toLocaleDateString('en-IN') : 'N/A' %>
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted);">
+                          <%= t.removedAt ? new Date(t.removedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '' %>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="badge badge-brand"><%= t.removedBy || 'admin' %></span>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 3rem 1rem;">
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 0.5rem auto; display: block; opacity: 0.4;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      No archived resident departure records found in the database.
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </main>

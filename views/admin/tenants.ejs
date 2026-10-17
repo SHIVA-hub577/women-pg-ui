@@ -3,81 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tenants Directory — Pujyasritha's Living</title>
+  <meta name="description" content="Resident Directory & Occupancy Ledger — Pujyasritha's Living">
+  <title>Residents Directory — Pujyasritha's Living</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="portal-admin">
   <%- include('../partials/header') %>
 
   <div class="app-container">
-    <%- include('../partials/sidebar') %>
+    <%- include('../partials/sidebar', { activePage: 'tenants' }) %>
 
     <main class="main-content">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div class="page-header">
         <div>
-          <h1>Tenants Directory</h1>
-          <p style="color: var(--text-muted);">Directory of active residents and allotted rooms</p>
+          <h1>Active Residents Directory</h1>
+          <p>Complete roster of registered residents, suite assignments, and contact details</p>
         </div>
-        <a href="/admin/tenants/new" class="btn btn-primary" style="width: auto;">+ Add New Resident</a>
+        <div class="page-header-actions">
+          <a href="/admin/tenants/new" class="btn btn-primary" style="width: auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Allot New Resident
+          </a>
+        </div>
       </div>
 
       <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger"><%= error %></div>
+        <div class="alert alert-danger" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <%= error %>
+        </div>
       <% } %>
 
       <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-info"><%= success %></div>
+        <div class="alert alert-success" role="alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/></svg>
+          <%= success %>
+        </div>
       <% } %>
 
       <div class="card">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Room</th>
-                <th>Phone</th>
-                <th>Emergency Contact</th>
-                <th>Email</th>
-                <th>Joining Date</th>
-                <th>Monthly Rent</th>
-                <th>Advance Paid</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% if (tenants && tenants.length > 0) { %>
-                <% tenants.forEach(t => { %>
-                  <tr>
-                    <td><strong><%= t.tenantId %></strong></td>
-                    <td><%= t.name %></td>
-                    <td><span class="badge badge-purple">Room <%= t.roomNumber %></span></td>
-                    <td><%= t.phone %></td>
-                    <td>
-                      <% if (t.emergencyContactNumber) { %>
-                        <div><%= t.emergencyContactNumber %></div>
-                        <% if (t.relation) { %>
-                          <div style="font-size: 0.75rem; color: var(--text-muted);">(<%= t.relation %>)</div>
-                        <% } %>
-                      <% } else { %>
-                        <span style="color: var(--text-muted);">N/A</span>
-                      <% } %>
-                    </td>
-                    <td><%= t.email || 'N/A' %></td>
-                    <td><%= t.joiningDate ? new Date(t.joiningDate).toLocaleDateString('en-IN') : 'N/A' %></td>
-                    <td>₹<%= (t.rent || 0).toLocaleString('en-IN') %></td>
-                    <td>₹<%= (t.advancePaid || 0).toLocaleString('en-IN') %></td>
-                    <td><span class="badge badge-green"><%= t.status || 'Active' %></span></td>
-                  </tr>
-                <% }); %>
-              <% } else { %>
+        <div class="card-header">
+          <h2>Active Residents (<%= tenants ? tenants.length : 0 %>)</h2>
+          <span class="badge badge-brand">Live Records</span>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
                 <tr>
-                  <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 2rem;">No tenants found.</td>
+                  <th>Resident ID</th>
+                  <th>Full Name</th>
+                  <th>Suite #</th>
+                  <th>Primary Phone</th>
+                  <th>Emergency Contact</th>
+                  <th>Registered Email</th>
+                  <th>Move-in Date</th>
+                  <th>Monthly Rent</th>
+                  <th>Advance Paid</th>
+                  <th>Status</th>
                 </tr>
-              <% } %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% if (tenants && tenants.length > 0) { %>
+                  <% tenants.forEach(t => { %>
+                    <tr>
+                      <td>
+                        <strong style="color: var(--primary); font-family: monospace; font-size: 0.9rem;"><%= t.tenantId %></strong>
+                      </td>
+                      <td>
+                        <div style="font-weight: 600; color: var(--text-primary);"><%= t.name %></div>
+                      </td>
+                      <td>
+                        <span class="badge badge-brand">Suite <%= t.roomNumber %></span>
+                      </td>
+                      <td><%= t.phone %></td>
+                      <td>
+                        <% if (t.emergencyContactNumber) { %>
+                          <div><%= t.emergencyContactNumber %></div>
+                          <% if (t.relation) { %>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">(<%= t.relation %>)</div>
+                          <% } %>
+                        <% } else { %>
+                          <span style="color: var(--text-faint);">N/A</span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <span style="font-size: 0.85rem;"><%= t.email || 'N/A' %></span>
+                      </td>
+                      <td><%= t.joiningDate ? new Date(t.joiningDate).toLocaleDateString('en-IN') : 'N/A' %></td>
+                      <td style="font-weight: 600;">&#8377;<%= (t.rent || 0).toLocaleString('en-IN') %></td>
+                      <td>&#8377;<%= (t.advancePaid || 0).toLocaleString('en-IN') %></td>
+                      <td>
+                        <span class="badge badge-green"><%= t.status || 'Active' %></span>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 3rem 1rem;">
+                      No resident records found in the system.
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </main>

@@ -1,13 +1,49 @@
-<footer class="footer">
-  <div class="container">
-    <p>&copy; <%= new Date().getFullYear() %> Pujyasritha's Living — Women's PG Management System. All rights reserved.</p>
+<footer class="footer" role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Pujyasritha's Living
+        </div>
+        <div class="footer-tagline">A safe, warm sanctuary for women in the city.</div>
+        <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+          <span style="font-size:0.78rem;color:rgba(253,241,245,0.5);display:flex;align-items:center;gap:0.4rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            Hyderabad, Telangana
+          </span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Portals</div>
+        <a href="/login" class="footer-link">Resident Portal</a>
+        <a href="/worker/login" class="footer-link">Worker Portal</a>
+        <a href="/admin/login" class="footer-link">Admin Portal</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Staying With Us</div>
+        <a href="/register" class="footer-link">New Resident</a>
+        <a href="/login" class="footer-link">My Account</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <%= new Date().getFullYear() %> Pujyasritha's Living. All rights reserved.</span>
+      <span style="display:flex;align-items:center;gap:0.3rem;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Safe &amp; Secure for Women
+      </span>
+    </div>
   </div>
 </footer>
 
-<!-- 3D Animation Engines & Libraries: Three.js, GSAP, Lenis -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script src="/js/animations-3d.js"></script>
-
+<%# CDN Scripts (Three.js, GSAP, Lenis) — only loaded on pages that use them %>
+<% if (typeof useAnimations !== 'undefined' && useAnimations) { %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
+<script src="/js/animations-3d.js" defer></script>
+<% } %>
