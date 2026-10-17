@@ -105,19 +105,26 @@
     // Scroll-Triggered Cards Reveal
     if (typeof ScrollTrigger !== 'undefined') {
       gsap.utils.toArray('.room-card, .portal-card, .feature-card, .faq-item').forEach((element, i) => {
-        gsap.from(element, {
-          scrollTrigger: {
-            trigger: element,
-            start: 'top 88%',
-            toggleActions: 'play none none reverse'
-          },
-          duration: 0.9,
-          y: 50,
-          rotateX: -10,
-          opacity: 0,
-          ease: 'power3.out',
-          delay: (i % 3) * 0.1
-        });
+        // NOTE: use fromTo with an explicit end state. A `from` tween would read
+        // the element's current styles as its end value, and since these cards
+        // start hidden by the `.reveal` class (opacity: 0) the cards would
+        // animate 0 -> 0 and stay invisible forever.
+        gsap.fromTo(element,
+          { opacity: 0, y: 50, rotateX: -10 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            delay: (i % 3) * 0.1,
+            scrollTrigger: {
+              trigger: element,
+              start: 'top 88%',
+              once: true
+            }
+          }
+        );
       });
     }
   }
@@ -136,20 +143,39 @@
       touchMultiplier: 1.5
     });
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      lenis.on('scroll', ScrollTrigger.update);
-
+    // Drive Lenis from ONE clock. Running a manual requestAnimationFrame loop
+    // *and* a gsap.ticker loop fed Lenis two different time bases, which made
+    // the virtual scroll jump/stall instead of following the wheel.
+    if (typeof gsap !== 'undefined') {
       gsap.ticker.add((time) => {
         lenis.raf(time * 1000);
       });
       gsap.ticker.lagSmoothing(0);
+    } else {
+      const raf = (time) => {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      };
+      requestAnimationFrame(raf);
     }
+
+    if (typeof ScrollTrigger !== 'undefined') {
+      lenis.on('scroll', ScrollTrigger.update);
+    }
+
+    // Route in-page anchor links (e.g. "Sign In" -> #portals) through Lenis.
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const id = link.getAttribute('href');
+        if (!id || id === '#') return;
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        lenis.scrollTo(target);
+      });
+    });
+
+    window.__lenis = lenis;
   }
 
   // DOM Content Loaded Handler
@@ -158,6 +184,13 @@
     initMagneticButtons();
     initLenisScroll();
     initGsapAnimations();
+
+    // Recalculate trigger positions once images/fonts have settled.
+    window.addEventListener('load', () => {
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
+    });
   });
 })();
 

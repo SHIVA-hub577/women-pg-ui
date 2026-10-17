@@ -101,21 +101,41 @@
 
       <!-- Right: Visual stat cards -->
       <div class="hero-visual reveal" style="animation-delay:0.15s;">
-        <div class="stats-grid" style="margin-bottom:1.25rem;">
-          <div class="stats-item">
-            <div class="stats-number" data-counter="40">40+</div>
-            <div class="stats-label">Residents</div>
+        <div class="snapshot-card" style="margin-bottom:1.25rem;">
+          <div class="snapshot-head">
+            <span class="snapshot-title">Residence snapshot</span>
+            <span class="snapshot-pill"><span class="snapshot-dot" aria-hidden="true"></span>Rooms available</span>
           </div>
-          <div class="stats-divider"></div>
-          <div class="stats-item">
-            <div class="stats-number" data-counter="4">4</div>
-            <div class="stats-label">Room Types</div>
+          <div class="snapshot-stats">
+            <div class="snapshot-stat">
+              <span class="snapshot-icon snapshot-icon-plum" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5"/><path d="M3 18h18"/><path d="M7 11V8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"/></svg>
+              </span>
+              <span class="snapshot-value">4</span>
+              <span class="snapshot-label">Room types</span>
+              <span class="snapshot-sub">1–4 sharing, fully furnished</span>
+            </div>
+            <div class="snapshot-stat">
+              <span class="snapshot-icon snapshot-icon-honey" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12"/><path d="M6 8h12"/><path d="M6 13l6 8 6-8"/></svg>
+              </span>
+              <span class="snapshot-value">₹5,000</span>
+              <span class="snapshot-label">Rooms from</span>
+              <span class="snapshot-sub">per month · meals &amp; WiFi included</span>
+            </div>
+            <div class="snapshot-stat">
+              <span class="snapshot-icon snapshot-icon-sage" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13A4 4 0 0 1 19 7a4 4 0 0 1-3 3.87"/></svg>
+              </span>
+              <span class="snapshot-value">40+</span>
+              <span class="snapshot-label">Women residents</span>
+              <span class="snapshot-sub">a women-only community</span>
+            </div>
           </div>
-          <div class="stats-divider"></div>
-          <div class="stats-item">
-            <div class="stats-number" data-counter="5">5★</div>
-            <div class="stats-label">Safety</div>
-          </div>
+          <p class="snapshot-foot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span><strong>5★ safety</strong> · CCTV, biometric entry &amp; in-house warden</span>
+          </p>
         </div>
         <div class="hero-visual-cards">
           <div class="hero-vcard anim-float">
@@ -236,85 +256,103 @@
   <!-- ROOM TYPES SECTION -->
   <section id="rooms" style="padding:5rem 0;" class="section-bg-warm" aria-labelledby="rooms-heading">
     <div class="container">
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem;">
-        <div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:2.5rem;">
+        <div style="max-width:34rem;">
           <div class="section-eyebrow">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 22h20"/><path d="M2 11h20"/><path d="M4 22V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v18"/></svg>
             Room Types
           </div>
           <h2 id="rooms-heading" class="section-title">Choose your comfort</h2>
-          <p class="section-sub">All rooms are fully furnished with AC, attached bathrooms, wardrobe, and study desk.</p>
+          <p class="section-sub">Fully furnished rooms with housekeeping and 24/7 security. Pick the sharing option that fits your budget.</p>
+        </div>
+        <a href="/register" class="btn btn-outline" id="rooms-cta-btn" style="width:auto;">Request a room</a>
+      </div>
+    </div>
+
+    <%
+      /* Defined once, rendered twice so the tour loops seamlessly.
+         The second pass is hidden from assistive tech. */
+      const roomTypes = [
+        {
+          img: '/Room-photos/1sharing-room.webp',
+          alt: 'Single-sharing room with a private bathroom, AC and a study desk',
+          badge: 'Private',
+          badgeColor: '#4a1530',
+          name: 'Single Sharing',
+          occupancy: '1 person',
+          price: '12,000',
+          advance: '₹50,000',
+          features: ['Private bathroom', 'AC + fan', 'Study desk & wardrobe']
+        },
+        {
+          img: '/Room-photos/2-sharing-room.webp',
+          alt: 'Double-sharing room with two study desks, AC and a shared bathroom',
+          badge: 'Popular',
+          badgeColor: '#2d6b4a',
+          name: 'Double Sharing',
+          occupancy: '2 people',
+          price: '8,500',
+          advance: '₹35,000',
+          features: ['Shared bathroom', 'AC + fan', '2 study desks']
+        },
+        {
+          img: '/Room-photos/3-sharing-room.webp',
+          alt: 'Triple-sharing room with a wardrobe for each resident and a shared bathroom',
+          badge: 'Value',
+          badgeColor: '#8a5518',
+          name: 'Triple Sharing',
+          occupancy: '3 people',
+          price: '6,500',
+          advance: '₹25,000',
+          features: ['Shared bathroom', 'Fan + cooler', 'Wardrobe per person']
+        },
+        {
+          img: '/Room-photos/4-sharing-room.webp',
+          alt: 'Four-sharing room with bunk or single beds, a fan and a common bathroom',
+          badge: 'Budget',
+          badgeColor: '#6b2145',
+          name: 'Four Sharing',
+          occupancy: '4 people',
+          price: '5,000',
+          advance: '₹20,000',
+          features: ['Common bathroom', 'Fan + cooler', 'Bunk or single beds']
+        }
+      ];
+    %>
+
+    <div class="room-tour reveal" id="roomTour">
+      <div class="room-carousel" role="group" aria-label="Room types and monthly rent">
+        <div class="room-carousel-track">
+          <% [false, true].forEach(function (isDuplicate) { %>
+            <% roomTypes.forEach(function (room) { %>
+              <article class="room-slide"<% if (isDuplicate) { %> aria-hidden="true" inert<% } %>>
+                <div class="room-slide-media">
+                  <img src="<%= room.img %>" alt="<%= isDuplicate ? '' : room.alt %>" decoding="async">
+                  <span class="room-slide-badge" style="background:<%= room.badgeColor %>;"><%= room.badge %></span>
+                  <span class="room-slide-price"><strong>₹<%= room.price %></strong> <span>/ month</span></span>
+                </div>
+                <div class="room-slide-body">
+                  <h3 class="room-slide-title"><%= room.name %></h3>
+                  <p class="room-slide-meta"><%= room.occupancy %> · +<%= room.advance %> one-time advance</p>
+                  <ul class="room-slide-features">
+                    <% room.features.forEach(function (feature) { %>
+                      <li><%= feature %></li>
+                    <% }); %>
+                  </ul>
+                  <a href="/register" class="room-slide-cta"<% if (isDuplicate) { %> tabindex="-1"<% } %>>Request this room <span aria-hidden="true">&#8594;</span></a>
+                </div>
+              </article>
+            <% }); %>
+          <% }); %>
         </div>
       </div>
-      <div class="room-card-grid">
-        <!-- Single -->
-        <div class="room-card reveal tilt-card-3d">
-          <div class="room-card-badge">Private</div>
-          <div class="room-card-body">
-            <div class="room-card-sharing">1</div>
-            <div class="room-card-label">Single Sharing</div>
-            <div style="margin-bottom:1rem;">
-              <div style="font-size:0.82rem;color:var(--text-muted);display:flex;flex-direction:column;gap:0.3rem;">
-                <span>✓ Private bathroom</span>
-                <span>✓ AC + Fan</span>
-                <span>✓ Study desk</span>
-              </div>
-            </div>
-            <div class="room-card-price">₹12,000 <span>/ month</span></div>
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">+ ₹50,000 advance</div>
-          </div>
-        </div>
-        <!-- Double -->
-        <div class="room-card reveal tilt-card-3d" style="transition-delay:0.08s;">
-          <div class="room-card-badge" style="background:#2d6b4a;">Popular</div>
-          <div class="room-card-body">
-            <div class="room-card-sharing">2</div>
-            <div class="room-card-label">Double Sharing</div>
-            <div style="margin-bottom:1rem;">
-              <div style="font-size:0.82rem;color:var(--text-muted);display:flex;flex-direction:column;gap:0.3rem;">
-                <span>✓ Shared bathroom</span>
-                <span>✓ AC + Fan</span>
-                <span>✓ 2 study desks</span>
-              </div>
-            </div>
-            <div class="room-card-price">₹8,500 <span>/ month</span></div>
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">+ ₹35,000 advance</div>
-          </div>
-        </div>
-        <!-- Triple -->
-        <div class="room-card reveal tilt-card-3d" style="transition-delay:0.16s;">
-          <div class="room-card-badge" style="background:#b8762e;">Value</div>
-          <div class="room-card-body">
-            <div class="room-card-sharing">3</div>
-            <div class="room-card-label">Triple Sharing</div>
-            <div style="margin-bottom:1rem;">
-              <div style="font-size:0.82rem;color:var(--text-muted);display:flex;flex-direction:column;gap:0.3rem;">
-                <span>✓ Shared bathroom</span>
-                <span>✓ Fan + Cooler</span>
-                <span>✓ Wardrobe/person</span>
-              </div>
-            </div>
-            <div class="room-card-price">₹6,500 <span>/ month</span></div>
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">+ ₹25,000 advance</div>
-          </div>
-        </div>
-        <!-- Four -->
-        <div class="room-card reveal tilt-card-3d" style="transition-delay:0.24s;">
-          <div class="room-card-badge" style="background:#6b2145;">Budget</div>
-          <div class="room-card-body">
-            <div class="room-card-sharing">4</div>
-            <div class="room-card-label">Four Sharing</div>
-            <div style="margin-bottom:1rem;">
-              <div style="font-size:0.82rem;color:var(--text-muted);display:flex;flex-direction:column;gap:0.3rem;">
-                <span>✓ Common bathroom</span>
-                <span>✓ Fan + Cooler</span>
-                <span>✓ Bunk/single beds</span>
-              </div>
-            </div>
-            <div class="room-card-price">₹5,000 <span>/ month</span></div>
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">+ ₹20,000 advance</div>
-          </div>
-        </div>
+      <div class="container room-carousel-controls">
+        <p class="room-carousel-hint">The room tour scrolls automatically — hover to pause.</p>
+        <button type="button" class="room-carousel-toggle" id="roomCarouselToggle" aria-pressed="false" aria-controls="roomTour">
+          <svg class="icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          <svg class="icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          <span class="room-carousel-toggle-label">Pause tour</span>
+        </button>
       </div>
     </div>
   </section>
@@ -518,15 +556,28 @@
   <script>
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          observer.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    reveals.forEach(el => observer.observe(el));
+    const showAll = () => reveals.forEach(el => el.classList.add('visible'));
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(el => observer.observe(el));
+
+      // Safety net: if the observer never fires for something already on screen,
+      // reveal it anyway so content can never stay permanently invisible.
+      window.addEventListener('load', () => setTimeout(() => {
+        reveals.forEach(el => {
+          if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+        });
+      }, 1000));
+    } else {
+      showAll();
+    }
 
     // 3D tilt effect
     const tiltCards = document.querySelectorAll('.tilt-card-3d');
@@ -542,16 +593,28 @@
       });
     });
 
-    // Lazy Three.js hero canvas
+    // Room tour: manual pause control (pausing also happens on hover/focus via CSS)
+    const roomTour = document.getElementById('roomTour');
+    const roomTourToggle = document.getElementById('roomCarouselToggle');
+    if (roomTour && roomTourToggle) {
+      roomTourToggle.addEventListener('click', () => {
+        const isPaused = roomTour.classList.toggle('is-paused');
+        roomTourToggle.setAttribute('aria-pressed', String(isPaused));
+        roomTourToggle.querySelector('.room-carousel-toggle-label').textContent = isPaused ? 'Play tour' : 'Pause tour';
+      });
+    }
+
+    // Lazy Three.js hero canvas — floating geometry in the brand palette
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof THREE !== 'undefined') {
         const canvas = document.getElementById('hero-canvas');
         if (!canvas) return;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
         camera.position.z = 6;
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
         const shapes = [];
@@ -576,14 +639,18 @@
         let stopped = false;
         const io = new IntersectionObserver(entries => { stopped = !entries[0].isIntersecting; });
         io.observe(canvas);
+        document.addEventListener('visibilitychange', () => { stopped = document.hidden; });
 
+        let elapsed = 0;
+        const clock = new THREE.Clock();
         function animate() {
           requestAnimationFrame(animate);
-          if (stopped) return;
+          if (stopped || reduceMotion) return;
+          elapsed += Math.min(clock.getDelta(), 0.05);
           shapes.forEach((s, i) => {
             s.rotation.x += 0.003 + i * 0.001;
             s.rotation.y += 0.004 + i * 0.0005;
-            s.position.y += Math.sin(Date.now() * 0.001 + i) * 0.002;
+            s.position.y += Math.sin(elapsed + i) * 0.002;
           });
           renderer.render(scene, camera);
         }
@@ -592,8 +659,11 @@
         window.addEventListener('resize', () => {
           camera.aspect = canvas.clientWidth / canvas.clientHeight;
           camera.updateProjectionMatrix();
-          renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+          renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+          if (reduceMotion) renderer.render(scene, camera);
         });
+
+        if (reduceMotion) renderer.render(scene, camera);
       }
     });
   </script>
